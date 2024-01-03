@@ -1,0 +1,23 @@
+{
+  "name": "logseq-plugin-vocabulary-card",
+  "version": "0.1.0",
+  "description": "create logseq plugin to create vocabulary card",
+  "main": "dist/index.html",
+  "scripts": {
+    "build": "webpack --config webpack.config.js"
+  },
+  "author": "Richard Hao <richard@0xdev.dev>",
+  "license": "MIT",
+  "devDependencies": {
+    "webpack": "^4.29.3",
+    "webpack-cli": "^3.1.0",
+    "copy-webpack-plugin": "^5.0.0"
+  },
+  "dependencies": {
+    "logseq-plugin-vocabulary-card": "file:../lib/pkg",
+    "@logseq/libs": "^0.0.17"
+  },
+  "logseq": {
+    "id": "logseq-plugin-vocabulary-card"
+  }
+}
