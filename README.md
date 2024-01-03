@@ -1,6 +1,10 @@
 # logseq-plugin-vocabulary-card
 
-A logseq plugin for creating vocabulary card. 
+A logseq plugin for creating vocabulary card. This plugin is using Gemini AI API to generate the vocabulary card.
+
+## Demo
+
+![demo](./demo.gif)
 
 ## Usage
 
