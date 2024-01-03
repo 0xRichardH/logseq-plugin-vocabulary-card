@@ -1,7 +1,7 @@
 {
   "name": "logseq-plugin-vocabulary-card",
   "version": "0.1.0",
-  "description": "create logseq plugin to create vocabulary card",
+  "description": "A logseq plugin for creating vocabulary card",
   "main": "dist/index.html",
   "scripts": {
     "build": "webpack --config webpack.config.js"
