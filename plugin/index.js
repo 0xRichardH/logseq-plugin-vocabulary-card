@@ -8,6 +8,12 @@ async function main() {
     type: "string",
     default: "",
     title: "API key for Gemini AI, you can get it from https://ai.google.dev/",
+  }, {
+    key: "custom_tags",
+    description: "Custom tags",
+    type: "string",
+    default: "#words",
+    title: "Custom tags for vocabulary card",
   }])
 
   logseq.Editor.registerSlashCommand(
@@ -18,13 +24,14 @@ async function main() {
         logseq.App.showMsg("Please set Gemini AI API Key first")
         return
       }
+      const custom_tags = logseq.settings["custom_tags"]
 
       const { content, uuid } = await logseq.Editor.getCurrentBlock()
       await logseq.Editor.updateBlock(uuid, `${content} loading...`);
 
       try {
         const word = await wasm.define_word(content, gemini_ai_api_key)
-        await logseq.Editor.updateBlock(uuid, `${word.word} #card`);
+        await logseq.Editor.updateBlock(uuid, `${word.word} #card ${custom_tags}`);
         await logseq.Editor.insertBlock(uuid, `*${word.pronunciation}*`, { before: false, sibling: false, focus: false, isPageBlock: false })
         await logseq.Editor.insertBlock(uuid, `**${word.definition}**`, { before: false, sibling: false, focus: false, isPageBlock: false })
         await logseq.Editor.insertBlock(uuid, `**Examples:**`, { before: false, sibling: false, focus: false, isPageBlock: false })
