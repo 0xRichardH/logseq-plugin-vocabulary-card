@@ -19,7 +19,7 @@ pub async fn define_word(word: &str, api_key: &str) -> Result<JsValue, JsValue> 
         api_key.trim()
     );
     let prompt = format!(
-        "please act as a dictionary, including the pronunciation, explanation, two examples of sentences, and one image. Please make the result as short as possible, and the word is {}. please output the result in json format, the json keys are `word`, `pronunciation`, `definition`, `examples`, and `image`.",
+        "please act as a dictionary, including the pronunciation, explanation, two examples of sentences, and one image. And the word is {}. please output the result in json format, the json keys are `word`, `pronunciation`, `definition`, `examples`, and `image`.",
         word.trim()
     );
 

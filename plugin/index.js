@@ -27,7 +27,7 @@ async function main() {
       const custom_tags = logseq.settings["custom_tags"]
 
       const { content, uuid } = await logseq.Editor.getCurrentBlock()
-      await logseq.Editor.updateBlock(uuid, `${content} loading...`);
+      await logseq.Editor.updateBlock(uuid, `${content} loading...`)
 
       try {
         const word = await wasm.define_word(content, gemini_ai_api_key)
@@ -38,6 +38,8 @@ async function main() {
         await logseq.Editor.insertBlock(uuid, `${word.examples[0]}`, { before: false, sibling: false, focus: false, isPageBlock: false })
         await logseq.Editor.insertBlock(uuid, `${word.examples[1]}`, { before: false, sibling: false, focus: false, isPageBlock: false })
       } catch (e) {
+        await logseq.Editor.updateBlock(uuid, `${content}`)
+        console.log(e)
         logseq.App.showMsg("Failed to generate vocabulary card." + e)
       }
     },
