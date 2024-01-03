@@ -10,8 +10,6 @@ async function main() {
     title: "API key for Gemini AI, you can get it from https://ai.google.dev/",
   }])
 
-  logseq.App.showMsg("hello world")
-
   logseq.Editor.registerSlashCommand(
     '📙 Generate Vocabulary Card',
     async () => {
@@ -22,16 +20,19 @@ async function main() {
       }
 
       const { content, uuid } = await logseq.Editor.getCurrentBlock()
-      const word = await wasm.define_word(content, gemini_ai_api_key)
-      const text = word.definition;
+      await logseq.Editor.updateBlock(uuid, `${content} loading...`);
 
-      console.log(word.pronunciation);
-
-      logseq.App.showMsg(`
-        [:div.p-2
-          [:h1 "#${uuid}"]
-          [:h2.text-xl "${text}"]]
-      `)
+      try {
+        const word = await wasm.define_word(content, gemini_ai_api_key)
+        await logseq.Editor.updateBlock(uuid, `${word.word} #card`);
+        await logseq.Editor.insertBlock(uuid, `*${word.pronunciation}*`, { before: false, sibling: false, focus: false, isPageBlock: false })
+        await logseq.Editor.insertBlock(uuid, `**${word.definition}**`, { before: false, sibling: false, focus: false, isPageBlock: false })
+        await logseq.Editor.insertBlock(uuid, `**Examples:**`, { before: false, sibling: false, focus: false, isPageBlock: false })
+        await logseq.Editor.insertBlock(uuid, `${word.examples[0]}`, { before: false, sibling: false, focus: false, isPageBlock: false })
+        await logseq.Editor.insertBlock(uuid, `${word.examples[1]}`, { before: false, sibling: false, focus: false, isPageBlock: false })
+      } catch (e) {
+        logseq.App.showMsg("Failed to generate vocabulary card." + e)
+      }
     },
   )
 }

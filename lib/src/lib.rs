@@ -55,7 +55,8 @@ pub async fn define_word(word: &str, api_key: &str) -> Result<JsValue, JsValue> 
     let dictionary_str = dictionary_str
         .trim_start_matches("```json")
         .trim_start_matches("```")
-        .trim_end_matches("```");
+        .trim_end_matches("```")
+        .trim();
     let dictionary = serde_json::from_str::<Word>(dictionary_str)
         .map_err(|e| JsValue::from_str(&format!("serde error: {}", e)))?;
 
