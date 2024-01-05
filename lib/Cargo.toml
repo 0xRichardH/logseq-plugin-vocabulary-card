@@ -2,7 +2,7 @@
 name = "logseq-plugin-vocabulary-card"
 version = "0.1.0"
 authors = ["Richard Hao <richard@0xdev.dev>"]
-edition = "2018"
+edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
