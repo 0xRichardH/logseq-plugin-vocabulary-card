@@ -1,6 +1,6 @@
 [package]
 name = "logseq-plugin-vocabulary-card"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Richard Hao <richard@0xdev.dev>"]
 edition = "2021"
 
@@ -8,15 +8,16 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-wasm-bindgen = "0.2.89"
-wasm-bindgen-futures = "0.4.39"
-serde-wasm-bindgen = "0.6.3"
-serde = { version = "1.0.194", features = ["derive"] }
-serde_json = "1.0.110"
-reqwest = { version = "0.11.23", features = ["blocking", "json"] }
+wasm-bindgen = "0.2.92"
+wasm-bindgen-futures = "0.4.42"
+serde-wasm-bindgen = "0.6.5"
+serde = { version = "1.0.204", features = ["derive"] }
+serde_json = "1.0.122"
+reqwest = { version = "0.12.5", features = ["blocking", "json"] }
+async-trait = "0.1.81"
 
 [dev-dependencies]
-wasm-bindgen-test = "0.3.39"
+wasm-bindgen-test = "0.3.42"
 
 [profile.release]
 # Tell `rustc` to optimize for small code size.
