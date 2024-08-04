@@ -1,6 +1,6 @@
 {
   "name": "logseq-plugin-vocabulary-card",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A logseq plugin for creating vocabulary card",
   "main": "dist/index.html",
   "scripts": {
