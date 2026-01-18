@@ -1,21 +1,24 @@
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { createOpenAI } from '@ai-sdk/openai';
-import { createAnthropic } from '@ai-sdk/anthropic';
 import type { LanguageModel } from 'ai';
 
 export type ProviderName = 'google' | 'openai' | 'anthropic';
 
-export function createModel(
+export async function createModel(
   provider: ProviderName,
   apiKey: string,
   modelName?: string
-): LanguageModel {
+): Promise<LanguageModel> {
   switch (provider) {
-    case 'google':
+    case 'google': {
+      const { createGoogleGenerativeAI } = await import('@ai-sdk/google');
       return createGoogleGenerativeAI({ apiKey })(modelName ?? 'gemini-2.5-flash');
-    case 'openai':
+    }
+    case 'openai': {
+      const { createOpenAI } = await import('@ai-sdk/openai');
       return createOpenAI({ apiKey })(modelName ?? 'gpt-5-2');
-    case 'anthropic':
+    }
+    case 'anthropic': {
+      const { createAnthropic } = await import('@ai-sdk/anthropic');
       return createAnthropic({ apiKey })(modelName ?? 'claude-haiku-4-5');
+    }
   }
 }
