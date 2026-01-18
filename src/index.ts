@@ -4,8 +4,9 @@ import { formatVocabularyCard } from './logseq/blocks';
 import { generateVocabularyCard } from './vocabulary/generator';
 import type { ProviderName } from './vocabulary/providers';
 
+logseq.useSettingsSchema(settingsSchema);
+
 async function main() {
-  logseq.useSettingsSchema(settingsSchema);
 
   logseq.Editor.registerSlashCommand('Generate Vocabulary Card', async () => {
     const block = await logseq.Editor.getCurrentBlock();
