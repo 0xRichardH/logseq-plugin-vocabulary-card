@@ -1,4 +1,4 @@
-import { generateObject } from 'ai';
+import { generateText, Output } from 'ai';
 import type { LanguageModel } from 'ai';
 import { WordDefinitionSchema, type WordDefinition } from './schema';
 import { createModel, type ProviderName } from './providers';
@@ -16,12 +16,14 @@ export async function generateVocabularyCard(
 ): Promise<WordDefinition> {
   const resolvedModel = model ?? createModel(provider, apiKey, modelName);
 
-  const { object } = await generateObject({
+  const { output } = await generateText({
     model: resolvedModel,
-    schema: WordDefinitionSchema,
+    output: Output.object({
+      schema: WordDefinitionSchema,
+    }),
     system: SYSTEM_PROMPT,
     prompt: `Define the word: "${word}"`,
   });
 
-  return object;
+  return output;
 }
