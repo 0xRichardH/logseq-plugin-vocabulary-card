@@ -12,6 +12,32 @@ A Logseq plugin for creating vocabulary flashcards using AI. Supports multiple A
 - Multi-provider support: Google Gemini (default), OpenAI, Anthropic
 - Customizable tags for flashcard organization
 
+## Installation
+
+1. Open Logseq and go to **Settings** → **Plugins**
+2. Click **Marketplace**
+3. Search for "Vocabulary Card"
+4. Click **Install**
+
+### Configuration
+
+After installation, configure the plugin:
+
+1. Go to **Settings** → **Plugins** → **Vocabulary Card Generator** (gear icon)
+2. Select your AI provider (Google Gemini, OpenAI, or Anthropic)
+3. Enter your API key for the selected provider
+
+## Usage
+
+1. Type a word in any block
+2. Type `/Generate Vocabulary Card` or use the slash command menu
+3. The plugin generates a flashcard with:
+   - Pronunciation (IPA)
+   - Definition
+   - Two example sentences
+
+The card is automatically formatted with `#card` tag for use with Logseq's flashcard feature.
+
 ## Local Development
 
 ### Prerequisites
