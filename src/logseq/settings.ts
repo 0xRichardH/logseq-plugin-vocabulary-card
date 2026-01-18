@@ -18,25 +18,11 @@ export const settingsSchema: SettingSchemaDesc[] = [
     description: 'API key for the selected provider',
   },
   {
-    key: 'googleModel',
+    key: 'customModel',
     type: 'string',
     default: '',
-    title: 'Google Model (Optional)',
-    description: 'Custom Google model name (default: gemini-2.5-flash)',
-  },
-  {
-    key: 'openaiModel',
-    type: 'string',
-    default: '',
-    title: 'OpenAI Model (Optional)',
-    description: 'Custom OpenAI model name (default: gpt-5-2)',
-  },
-  {
-    key: 'anthropicModel',
-    type: 'string',
-    default: '',
-    title: 'Anthropic Model (Optional)',
-    description: 'Custom Anthropic model name (default: claude-haiku-4-5)',
+    title: 'Custom Model (Optional)',
+    description: 'Override default model. Defaults: gemini-2.5-flash (Google), gpt-5-2 (OpenAI), claude-haiku-4-5 (Anthropic)',
   },
   {
     key: 'customTags',

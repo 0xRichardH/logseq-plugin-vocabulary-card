@@ -19,12 +19,7 @@ async function main() {
     const provider = (settings?.provider ?? 'google') as ProviderName;
     const apiKey = settings?.apiKey as string;
     const customTags = (settings?.customTags ?? '#words') as string;
-    
-    const modelName = provider === 'google' 
-      ? settings?.googleModel as string
-      : provider === 'openai'
-      ? settings?.openaiModel as string
-      : settings?.anthropicModel as string;
+    const modelName = settings?.customModel as string;
 
     if (!apiKey) {
       logseq.UI.showMsg('Please configure your API key in settings', 'error');
