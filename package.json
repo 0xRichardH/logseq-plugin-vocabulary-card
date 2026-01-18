@@ -2,8 +2,7 @@
   "name": "logseq-plugin-vocabulary-card",
   "version": "2.0.1",
   "description": "Generate vocabulary flashcards in Logseq using AI",
-  "type": "module",
-  "main": "dist/index.js",
+  "main": "index.html",
   "scripts": {
     "dev": "bun build src/index.ts --outdir dist --watch",
     "build": "bun build src/index.ts --outdir dist --minify",
@@ -23,7 +22,7 @@
     "id": "logseq-plugin-vocabulary-card",
     "title": "Vocabulary Card Generator",
     "icon": "./logo.svg",
-    "main": "dist/index.js"
+    "main": "index.html"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.15",
