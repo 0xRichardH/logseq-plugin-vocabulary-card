@@ -11,9 +11,10 @@ export async function generateVocabularyCard(
   word: string,
   provider: ProviderName,
   apiKey: string,
-  model?: LanguageModel
+  model?: LanguageModel,
+  modelName?: string
 ): Promise<WordDefinition> {
-  const resolvedModel = model ?? createModel(provider, apiKey);
+  const resolvedModel = model ?? createModel(provider, apiKey, modelName);
 
   const { object } = await generateObject({
     model: resolvedModel,

@@ -58,6 +58,25 @@ describe('generateVocabularyCard', () => {
     expect(result.image).toBe('https://example.com/cat.jpg');
   });
 
+  it('accepts custom model name parameter', async () => {
+    const mockResponse = {
+      word: 'test',
+      pronunciation: '/test/',
+      definition: 'a test word',
+      examples: ['First example.', 'Second example.'],
+    };
+
+    const result = await generateVocabularyCard(
+      'test',
+      'google',
+      'fake-api-key',
+      createMockModel(mockResponse),
+      'gemini-3-flash-preview'
+    );
+
+    expect(result.word).toBe('test');
+  });
+
   describe('error handling', () => {
     it('throws when AI returns invalid JSON', async () => {
       const invalidModel = new MockLanguageModelV3({

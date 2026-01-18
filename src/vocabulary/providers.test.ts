@@ -4,18 +4,35 @@ import { createModel, type ProviderName } from './providers';
 describe('createModel', () => {
   const testApiKey = 'test-api-key-12345';
 
-  it('creates Google Gemini model', () => {
+  it('creates Google Gemini model with default version', () => {
     const model = createModel('google', testApiKey);
 
     expect(model).toBeDefined();
-    // Use type assertion to access LanguageModelV3 properties
     const modelObj = model as { modelId: string; provider: string };
-    expect(modelObj.modelId).toBe('gemini-2.5-flash-preview-04-17');
+    expect(modelObj.modelId).toBe('gemini-2.5-flash');
     expect(modelObj.provider).toBe('google.generative-ai');
   });
 
-  it('creates OpenAI model', () => {
+  it('creates Google Gemini model with custom model name', () => {
+    const model = createModel('google', testApiKey, 'gemini-3-flash-preview');
+
+    expect(model).toBeDefined();
+    const modelObj = model as { modelId: string; provider: string };
+    expect(modelObj.modelId).toBe('gemini-3-flash-preview');
+    expect(modelObj.provider).toBe('google.generative-ai');
+  });
+
+  it('creates OpenAI model with default version', () => {
     const model = createModel('openai', testApiKey);
+
+    expect(model).toBeDefined();
+    const modelObj = model as { modelId: string; provider: string };
+    expect(modelObj.modelId).toBe('gpt-5-2');
+    expect(modelObj.provider).toBe('openai.responses');
+  });
+
+  it('creates OpenAI model with custom model name', () => {
+    const model = createModel('openai', testApiKey, 'gpt-4o-mini');
 
     expect(model).toBeDefined();
     const modelObj = model as { modelId: string; provider: string };
@@ -23,12 +40,21 @@ describe('createModel', () => {
     expect(modelObj.provider).toBe('openai.responses');
   });
 
-  it('creates Anthropic model', () => {
+  it('creates Anthropic model with default version', () => {
     const model = createModel('anthropic', testApiKey);
 
     expect(model).toBeDefined();
     const modelObj = model as { modelId: string; provider: string };
-    expect(modelObj.modelId).toBe('claude-3-haiku-20240307');
+    expect(modelObj.modelId).toBe('claude-haiku-4-5');
+    expect(modelObj.provider).toBe('anthropic.messages');
+  });
+
+  it('creates Anthropic model with custom model name', () => {
+    const model = createModel('anthropic', testApiKey, 'claude-opus-4-5-20251101');
+
+    expect(model).toBeDefined();
+    const modelObj = model as { modelId: string; provider: string };
+    expect(modelObj.modelId).toBe('claude-opus-4-5-20251101');
     expect(modelObj.provider).toBe('anthropic.messages');
   });
 

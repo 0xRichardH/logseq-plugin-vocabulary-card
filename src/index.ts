@@ -19,6 +19,12 @@ async function main() {
     const provider = (settings?.provider ?? 'google') as ProviderName;
     const apiKey = settings?.apiKey as string;
     const customTags = (settings?.customTags ?? '#words') as string;
+    
+    const modelName = provider === 'google' 
+      ? settings?.googleModel as string
+      : provider === 'openai'
+      ? settings?.openaiModel as string
+      : settings?.anthropicModel as string;
 
     if (!apiKey) {
       logseq.UI.showMsg('Please configure your API key in settings', 'error');
@@ -28,7 +34,13 @@ async function main() {
     try {
       logseq.UI.showMsg(`Generating card for "${word}"...`, 'info');
 
-      const definition = await generateVocabularyCard(word, provider, apiKey);
+      const definition = await generateVocabularyCard(
+        word,
+        provider,
+        apiKey,
+        undefined,
+        modelName || undefined
+      );
       const lines = formatVocabularyCard(definition, customTags);
 
       await logseq.Editor.updateBlock(block.uuid, lines[0]);
