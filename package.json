@@ -4,8 +4,8 @@
   "description": "Generate vocabulary flashcards in Logseq using AI",
   "main": "index.html",
   "scripts": {
-    "dev": "bun build src/index.ts --outdir dist --watch",
-    "build": "bun build src/index.ts --outdir dist --minify",
+    "dev": "bun build src/index.ts --outdir dist --splitting --watch",
+    "build": "bun build src/index.ts --outdir dist --splitting --minify",
     "typecheck": "tsc --noEmit",
     "test": "bun test"
   },
