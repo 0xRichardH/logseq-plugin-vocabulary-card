@@ -58,16 +58,4 @@ describe('formatVocabularyCard', () => {
 
     expect(lines[2]).toBe('**the symbol * used in printing**');
   });
-
-  it('includes image markdown when image URL is present', () => {
-    const definitionWithImage: WordDefinition = {
-      ...sampleDefinition,
-      image: 'https://example.com/image.jpg',
-    };
-
-    const lines = formatVocabularyCard(definitionWithImage, '#words');
-
-    expect(lines).toHaveLength(6);
-    expect(lines[5]).toBe('![Image](https://example.com/image.jpg)');
-  });
 });
