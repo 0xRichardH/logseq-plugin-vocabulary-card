@@ -39,7 +39,7 @@ jobs:
         id: package
         run: |
           mkdir ${{ env.PLUGIN_NAME }}
-          cp README.md package.json demo.gif ${{ env.PLUGIN_NAME }}
+          cp README.md package.json index.html logo.svg demo.gif ${{ env.PLUGIN_NAME }}
           cp -r dist ${{ env.PLUGIN_NAME }}
           zip -r ${{ env.PLUGIN_NAME }}.zip ${{ env.PLUGIN_NAME }}
           echo "tag_name=$(git tag --sort version:refname | tail -n 1)" >> $GITHUB_OUTPUT
