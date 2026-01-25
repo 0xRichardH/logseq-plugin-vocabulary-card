@@ -11,9 +11,5 @@ export function formatVocabularyCard(
     ...definition.examples,
   ];
 
-  if (definition.image) {
-    lines.push(`![Image](${definition.image})`);
-  }
-
   return lines;
 }

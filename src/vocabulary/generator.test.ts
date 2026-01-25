@@ -36,26 +36,6 @@ describe('generateVocabularyCard', () => {
     expect(result.pronunciation).toBe('/ɪˈfem(ə)rəl/');
     expect(result.definition).toBe('lasting for a very short time');
     expect(result.examples).toHaveLength(2);
-    expect(result.image).toBeUndefined();
-  });
-
-  it('includes optional image field when provided', async () => {
-    const mockResponse = {
-      word: 'cat',
-      pronunciation: '/kæt/',
-      definition: 'a small domesticated carnivorous mammal',
-      examples: ['The cat sat on the mat.', 'She has a black cat.'],
-      image: 'https://example.com/cat.jpg',
-    };
-
-    const result = await generateVocabularyCard(
-      'cat',
-      'google',
-      'fake-api-key',
-      createMockModel(mockResponse)
-    );
-
-    expect(result.image).toBe('https://example.com/cat.jpg');
   });
 
   it('accepts custom model name parameter', async () => {
