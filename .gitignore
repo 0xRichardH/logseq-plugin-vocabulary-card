@@ -3,4 +3,5 @@ dist/
 *.log
 .DS_Store
 bun.lockb
-.opencode/
+.opencode/*
+!.opencode/skills/
