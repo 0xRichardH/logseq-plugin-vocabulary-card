@@ -1,0 +1,130 @@
+name: Auto Tag on Version Bump
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+
+permissions:
+  contents: write
+
+jobs:
+  auto-tag:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for tags
+      
+      - name: Extract package.json version
+        id: package-version
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "📦 Package version: $VERSION"
+          
+          # Validate semantic versioning format
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "❌ Error: Version '$VERSION' does not follow semantic versioning (X.Y.Z)"
+            exit 1
+          fi
+      
+      - name: Get latest git tag
+        id: latest-tag
+        run: |
+          # Get latest tag, fallback to v0.0.0 if no tags exist
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          LATEST_VERSION=${LATEST_TAG#v}  # Strip 'v' prefix
+          
+          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          echo "latest_version=$LATEST_VERSION" >> $GITHUB_OUTPUT
+          echo "🏷️  Latest tag: $LATEST_TAG (version: $LATEST_VERSION)"
+      
+      - name: Compare versions
+        id: compare
+        run: |
+          PKG_VERSION="${{ steps.package-version.outputs.version }}"
+          LATEST_VERSION="${{ steps.latest-tag.outputs.latest_version }}"
+          
+          echo "Comparing: package.json ($PKG_VERSION) vs latest tag ($LATEST_VERSION)"
+          
+          # Version comparison function
+          compare_versions() {
+            if [ "$1" = "$2" ]; then
+              echo 0
+              return
+            fi
+            
+            local IFS=.
+            local i ver1=($1) ver2=($2)
+            
+            # Fill empty positions with zeros
+            for ((i=${#ver1[@]}; i<${#ver2[@]}; i++)); do
+              ver1[i]=0
+            done
+            
+            for ((i=0; i<${#ver1[@]}; i++)); do
+              if [[ -z ${ver2[i]} ]]; then
+                ver2[i]=0
+              fi
+              if ((10#${ver1[i]} > 10#${ver2[i]})); then
+                echo 1
+                return
+              fi
+              if ((10#${ver1[i]} < 10#${ver2[i]})); then
+                echo 2
+                return
+              fi
+            done
+            echo 0
+          }
+          
+          RESULT=$(compare_versions "$PKG_VERSION" "$LATEST_VERSION")
+          
+          if [ "$RESULT" -eq 0 ]; then
+            echo "⏭️  Version unchanged ($PKG_VERSION), skipping tag creation"
+            echo "should_tag=false" >> $GITHUB_OUTPUT
+          elif [ "$RESULT" -eq 1 ]; then
+            echo "✅ Version bumped: $LATEST_VERSION → $PKG_VERSION"
+            echo "should_tag=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Error: package.json version ($PKG_VERSION) is older than latest tag ($LATEST_VERSION)"
+            echo "This appears to be a version rollback, which is not allowed."
+            exit 1
+          fi
+      
+      - name: Create and push tag
+        if: steps.compare.outputs.should_tag == 'true'
+        run: |
+          VERSION="${{ steps.package-version.outputs.version }}"
+          TAG="v$VERSION"
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          echo "🏷️  Creating tag: $TAG"
+          git tag -a "$TAG" -m "Release $TAG"
+          
+          echo "📤 Pushing tag to origin"
+          git push origin "$TAG"
+          
+          echo "✅ Successfully created and pushed tag $TAG"
+          echo "🚀 The publish.yml workflow will now handle the release"
+      
+      - name: Summary
+        if: steps.compare.outputs.should_tag == 'true'
+        run: |
+          VERSION="${{ steps.package-version.outputs.version }}"
+          cat >> $GITHUB_STEP_SUMMARY <<EOF
+          # 🎉 Tag Created Successfully
+          
+          - **Version:** $VERSION
+          - **Tag:** v$VERSION
+          - **Previous:** ${{ steps.latest-tag.outputs.latest_tag }}
+          
+          The \`publish.yml\` workflow has been triggered and will build and release the plugin.
+          EOF
