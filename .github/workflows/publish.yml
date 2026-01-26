@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - '*'
+  repository_dispatch:
+    types: [release]
 
 permissions:
   contents: write
@@ -17,6 +19,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.client_payload.tag || github.ref }}
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -42,7 +46,14 @@ jobs:
           cp README.md package.json index.html logo.svg demo.gif ${{ env.PLUGIN_NAME }}
           cp -r dist ${{ env.PLUGIN_NAME }}
           zip -r ${{ env.PLUGIN_NAME }}.zip ${{ env.PLUGIN_NAME }}
-          echo "tag_name=$(git tag --sort version:refname | tail -n 1)" >> $GITHUB_OUTPUT
+          
+          # Get tag name from dispatch event or git tag
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            TAG_NAME="${{ github.event.client_payload.tag }}"
+          else
+            TAG_NAME=$(git tag --sort version:refname | tail -n 1)
+          fi
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
 
       - name: Create Release
         uses: ncipollo/release-action@v1
