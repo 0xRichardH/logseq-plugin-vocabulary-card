@@ -8,16 +8,11 @@ function getActiveConfig() {
   const settings = (logseq.settings ?? {}) as Record<string, unknown>;
   const provider = (settings.provider ?? 'google') as ProviderName;
 
-  // Construct keys dynamically
-  const apiKeyKey = `${provider}ApiKey`;
-  const baseUrlKey = `${provider}BaseUrl`;
-  const modelKey = `${provider}Model`;
-
   return {
     provider,
-    apiKey: (settings[apiKeyKey] as string) || undefined,
-    baseUrl: (settings[baseUrlKey] as string) || undefined,
-    modelName: (settings[modelKey] as string) || undefined,
+    apiKey: (settings.apiKey as string) || undefined,
+    baseUrl: (settings.baseUrl as string) || undefined,
+    modelName: (settings.modelName as string) || undefined,
     customTags: (settings.customTags ?? '#words') as string,
   };
 }
@@ -47,25 +42,23 @@ async function main() {
     const word = block.content.trim();
     const config = getActiveConfig();
 
-    // Validate API key
+    // Validate API key (required for all except ollama)
     if (requiresApiKey(config.provider) && !config.apiKey) {
-      // Custom provider might have optional API key depending on the backend,
-      // but if requiresApiKey says true, we generally enforce it.
-      // However, for 'custom', the schema title says "Optional".
-      // Let's relax the check for custom if it's truly optional.
       if (config.provider !== 'custom') {
         logseq.UI.showMsg(
-          `Please configure ${config.provider} API key in settings`,
+          `Please configure API key in settings`,
           'error'
         );
         return;
       }
     }
 
-    // Validate Base URL
-    if (config.provider === 'custom' && !config.baseUrl) {
-      logseq.UI.showMsg('Base URL is required for custom provider', 'error');
-      return;
+    // Validate Base URL for providers that need it
+    if ((config.provider === 'custom' || config.provider === 'ollama') && !config.baseUrl) {
+      if (config.provider === 'custom') {
+        logseq.UI.showMsg('Base URL is required for custom provider', 'error');
+        return;
+      }
     }
 
     // Validate Model Name for custom provider
