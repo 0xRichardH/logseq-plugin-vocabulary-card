@@ -24,15 +24,38 @@ export async function createModel(options: CreateModelOptions): Promise<Language
   switch (provider) {
     case 'google': {
       const { createGoogleGenerativeAI } = await import('@ai-sdk/google');
-      return createGoogleGenerativeAI({ apiKey: apiKey! })(modelName ?? 'gemini-2.5-flash');
+      return createGoogleGenerativeAI({
+        apiKey: apiKey!,
+        baseURL: baseUrl || undefined,
+      })(modelName ?? 'gemini-2.5-flash');
     }
     case 'openai': {
       const { createOpenAI } = await import('@ai-sdk/openai');
-      return createOpenAI({ apiKey: apiKey! })(modelName ?? 'gpt-5-2');
+      return createOpenAI({
+        apiKey: apiKey!,
+        baseURL: baseUrl || undefined,
+      })(modelName ?? 'gpt-5-2');
     }
     case 'anthropic': {
       const { createAnthropic } = await import('@ai-sdk/anthropic');
-      return createAnthropic({ apiKey: apiKey! })(modelName ?? 'claude-haiku-4-5');
+      return createAnthropic({
+        apiKey: apiKey!,
+        baseURL: baseUrl || undefined,
+      })(modelName ?? 'claude-haiku-4-5');
+    }
+    case 'openai': {
+      const { createOpenAI } = await import('@ai-sdk/openai');
+      return createOpenAI({ 
+        apiKey: apiKey!,
+        baseURL: baseUrl || undefined
+      })(modelName ?? 'gpt-5-2');
+    }
+    case 'anthropic': {
+      const { createAnthropic } = await import('@ai-sdk/anthropic');
+      return createAnthropic({ 
+        apiKey: apiKey!,
+        baseURL: baseUrl || undefined
+      })(modelName ?? 'claude-haiku-4-5');
     }
     case 'ollama': {
       const { createOpenAICompatible } = await import('@ai-sdk/openai-compatible');

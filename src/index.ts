@@ -1,5 +1,5 @@
 import '@logseq/libs';
-import { getSettingsSchema } from './logseq/settings';
+import { settingsSchema } from './logseq/settings';
 import { formatVocabularyCard } from './logseq/blocks';
 import { generateVocabularyCard } from './vocabulary/generator';
 import { requiresApiKey, type ProviderName } from './vocabulary/providers';
@@ -8,29 +8,24 @@ function getActiveConfig() {
   const settings = (logseq.settings ?? {}) as Record<string, unknown>;
   const provider = (settings.provider ?? 'google') as ProviderName;
 
+  // Construct namespaced keys based on selected provider
+  // e.g. googleApiKey, googleBaseUrl, googleModelName
+  const apiKeyKey = `${provider}ApiKey`;
+  const baseUrlKey = `${provider}BaseUrl`;
+  const modelNameKey = `${provider}ModelName`;
+
   return {
     provider,
-    apiKey: (settings.apiKey as string) || undefined,
-    baseUrl: (settings.baseUrl as string) || undefined,
-    modelName: (settings.modelName as string) || undefined,
+    apiKey: (settings[apiKeyKey] as string) || undefined,
+    baseUrl: (settings[baseUrlKey] as string) || undefined,
+    modelName: (settings[modelNameKey] as string) || undefined,
     customTags: (settings.customTags ?? '#words') as string,
   };
 }
 
 async function main() {
-  // Initial settings registration
-  const { provider } = getActiveConfig();
-  logseq.useSettingsSchema(getSettingsSchema(provider));
-
-  // Dynamic settings update
-  logseq.onSettingsChanged((newSettings, oldSettings) => {
-    const previousProvider = oldSettings?.provider;
-    if (newSettings.provider !== previousProvider) {
-      logseq.useSettingsSchema(
-        getSettingsSchema(newSettings.provider as ProviderName)
-      );
-    }
-  });
+  // Use the static settings schema
+  logseq.useSettingsSchema(settingsSchema);
 
   logseq.Editor.registerSlashCommand('Generate Vocabulary Card', async () => {
     const block = await logseq.Editor.getCurrentBlock();
@@ -46,7 +41,7 @@ async function main() {
     if (requiresApiKey(config.provider) && !config.apiKey) {
       if (config.provider !== 'custom') {
         logseq.UI.showMsg(
-          `Please configure API key in settings`,
+          `Please configure API key for ${config.provider} in settings`,
           'error'
         );
         return;
