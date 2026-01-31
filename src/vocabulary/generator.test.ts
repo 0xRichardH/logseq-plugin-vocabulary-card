@@ -25,12 +25,12 @@ describe('generateVocabularyCard', () => {
       examples: ['Fame is ephemeral.', 'The ephemeral beauty of cherry blossoms.'],
     };
 
-    const result = await generateVocabularyCard(
-      'ephemeral',
-      'google',
-      'fake-api-key',
-      createMockModel(mockResponse)
-    );
+    const result = await generateVocabularyCard({
+      word: 'ephemeral',
+      provider: 'google',
+      apiKey: 'fake-api-key',
+      model: createMockModel(mockResponse),
+    });
 
     expect(result.word).toBe('ephemeral');
     expect(result.pronunciation).toBe('/ɪˈfem(ə)rəl/');
@@ -46,13 +46,13 @@ describe('generateVocabularyCard', () => {
       examples: ['First example.', 'Second example.'],
     };
 
-    const result = await generateVocabularyCard(
-      'test',
-      'google',
-      'fake-api-key',
-      createMockModel(mockResponse),
-      'gemini-3-flash-preview'
-    );
+    const result = await generateVocabularyCard({
+      word: 'test',
+      provider: 'google',
+      apiKey: 'fake-api-key',
+      model: createMockModel(mockResponse),
+      modelName: 'gemini-3-flash-preview',
+    });
 
     expect(result.word).toBe('test');
   });
@@ -72,7 +72,12 @@ describe('generateVocabularyCard', () => {
       });
 
       await expect(
-        generateVocabularyCard('test', 'google', 'fake-key', invalidModel)
+        generateVocabularyCard({
+          word: 'test',
+          provider: 'google',
+          apiKey: 'fake-key',
+          model: invalidModel,
+        })
       ).rejects.toThrow();
     });
 
@@ -80,13 +85,17 @@ describe('generateVocabularyCard', () => {
       const incompleteResponse = {
         word: 'test',
         pronunciation: '/test/',
-        // missing: definition, examples
       };
 
       const invalidModel = createMockModel(incompleteResponse);
 
       await expect(
-        generateVocabularyCard('test', 'google', 'fake-key', invalidModel)
+        generateVocabularyCard({
+          word: 'test',
+          provider: 'google',
+          apiKey: 'fake-key',
+          model: invalidModel,
+        })
       ).rejects.toThrow();
     });
 
@@ -95,13 +104,18 @@ describe('generateVocabularyCard', () => {
         word: 'test',
         pronunciation: '/test/',
         definition: 'a test word',
-        examples: ['Only one example'], // should be exactly 2
+        examples: ['Only one example'],
       };
 
       const invalidModel = createMockModel(wrongExamplesResponse);
 
       await expect(
-        generateVocabularyCard('test', 'google', 'fake-key', invalidModel)
+        generateVocabularyCard({
+          word: 'test',
+          provider: 'google',
+          apiKey: 'fake-key',
+          model: invalidModel,
+        })
       ).rejects.toThrow();
     });
   });

@@ -7,14 +7,19 @@ export const SYSTEM_PROMPT = `You are a vocabulary dictionary assistant.
 Provide accurate word definitions with phonetic pronunciation, 
 clear explanations, and helpful example sentences.`;
 
-export async function generateVocabularyCard(
-  word: string,
-  provider: ProviderName,
-  apiKey: string,
-  model?: LanguageModel,
-  modelName?: string
-): Promise<WordDefinition> {
-  const resolvedModel = model ?? await createModel(provider, apiKey, modelName);
+export interface GenerateOptions {
+  word: string;
+  provider: ProviderName;
+  apiKey?: string;
+  baseUrl?: string;
+  modelName?: string;
+  model?: LanguageModel;
+}
+
+export async function generateVocabularyCard(options: GenerateOptions): Promise<WordDefinition> {
+  const { word, provider, apiKey, baseUrl, modelName, model } = options;
+
+  const resolvedModel = model ?? await createModel({ provider, apiKey, baseUrl, modelName });
 
   const { output } = await generateText({
     model: resolvedModel,
