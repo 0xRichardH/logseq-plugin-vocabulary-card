@@ -8,17 +8,11 @@ function getActiveConfig() {
   const settings = (logseq.settings ?? {}) as Record<string, unknown>;
   const provider = (settings.provider ?? 'google') as ProviderName;
 
-  // Construct namespaced keys based on selected provider
-  // e.g. googleApiKey, googleBaseUrl, googleModelName
-  const apiKeyKey = `${provider}ApiKey`;
-  const baseUrlKey = `${provider}BaseUrl`;
-  const modelNameKey = `${provider}ModelName`;
-
   return {
     provider,
-    apiKey: (settings[apiKeyKey] as string) || undefined,
-    baseUrl: (settings[baseUrlKey] as string) || undefined,
-    modelName: (settings[modelNameKey] as string) || undefined,
+    apiKey: (settings.aiApiKey as string) || undefined,
+    baseUrl: (settings.aiBaseUrl as string) || undefined,
+    modelName: (settings.aiModelId as string) || undefined,
     customTags: (settings.customTags ?? '#words') as string,
   };
 }
@@ -39,26 +33,22 @@ async function main() {
 
     // Validate API key (required for all except ollama)
     if (requiresApiKey(config.provider) && !config.apiKey) {
-      if (config.provider !== 'custom') {
-        logseq.UI.showMsg(
-          `Please configure API key for ${config.provider} in settings`,
-          'error'
-        );
-        return;
-      }
+      logseq.UI.showMsg(
+        `Please configure API key for ${config.provider} in settings`,
+        'error'
+      );
+      return;
     }
 
-    // Validate Base URL for providers that need it
-    if ((config.provider === 'custom' || config.provider === 'ollama') && !config.baseUrl) {
-      if (config.provider === 'custom') {
-        logseq.UI.showMsg('Base URL is required for custom provider', 'error');
-        return;
-      }
+    // Validate Base URL for openai-compatible
+    if (config.provider === 'openai-compatible' && !config.baseUrl) {
+      logseq.UI.showMsg('Base URL is required for openai-compatible provider', 'error');
+      return;
     }
 
-    // Validate Model Name for custom provider
-    if (config.provider === 'custom' && !config.modelName) {
-      logseq.UI.showMsg('Model name is required for custom provider', 'error');
+    // Validate Model Name for openai-compatible
+    if (config.provider === 'openai-compatible' && !config.modelName) {
+      logseq.UI.showMsg('Model name is required for openai-compatible provider', 'error');
       return;
     }
 

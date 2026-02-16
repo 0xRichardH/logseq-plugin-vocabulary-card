@@ -1,6 +1,6 @@
 import type { LanguageModel } from 'ai';
 
-export type ProviderName = 'google' | 'openai' | 'anthropic' | 'ollama' | 'openrouter' | 'custom';
+export type ProviderName = 'google' | 'openai' | 'anthropic' | 'ollama' | 'openrouter' | 'openai-compatible';
 
 export interface CreateModelOptions {
   provider: ProviderName;
@@ -43,27 +43,13 @@ export async function createModel(options: CreateModelOptions): Promise<Language
         baseURL: baseUrl || undefined,
       })(modelName ?? 'claude-haiku-4-5');
     }
-    case 'openai': {
-      const { createOpenAI } = await import('@ai-sdk/openai');
-      return createOpenAI({ 
-        apiKey: apiKey!,
-        baseURL: baseUrl || undefined
-      })(modelName ?? 'gpt-5-2');
-    }
-    case 'anthropic': {
-      const { createAnthropic } = await import('@ai-sdk/anthropic');
-      return createAnthropic({ 
-        apiKey: apiKey!,
-        baseURL: baseUrl || undefined
-      })(modelName ?? 'claude-haiku-4-5');
-    }
     case 'ollama': {
       const { createOpenAICompatible } = await import('@ai-sdk/openai-compatible');
       const defaults = PROVIDER_DEFAULTS.ollama;
       const provider = createOpenAICompatible({
         name: 'ollama',
         baseURL: baseUrl ?? defaults.baseUrl,
-        apiKey: 'ollama',
+        apiKey: apiKey || 'ollama',
       });
       return provider.chatModel(modelName ?? defaults.model);
     }
@@ -77,12 +63,12 @@ export async function createModel(options: CreateModelOptions): Promise<Language
       });
       return provider.chatModel(modelName ?? defaults.model);
     }
-    case 'custom': {
+    case 'openai-compatible': {
       const { createOpenAICompatible } = await import('@ai-sdk/openai-compatible');
-      if (!baseUrl) throw new Error('Base URL required for custom provider');
-      if (!modelName) throw new Error('Model name required for custom provider');
+      if (!baseUrl) throw new Error('Base URL required for openai-compatible provider');
+      if (!modelName) throw new Error('Model name required for openai-compatible provider');
       const provider = createOpenAICompatible({
-        name: 'custom',
+        name: 'openai-compatible',
         baseURL: baseUrl,
         apiKey: apiKey ?? 'none',
       });

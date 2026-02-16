@@ -105,22 +105,22 @@ describe('createModel', () => {
     });
   });
 
-  describe('custom', () => {
+  describe('openai-compatible', () => {
     it('throws when baseUrl is missing', async () => {
       await expect(
-        createModel({ provider: 'custom', modelName: 'test-model' })
+        createModel({ provider: 'openai-compatible', modelName: 'test-model' })
       ).rejects.toThrow('Base URL required');
     });
 
     it('throws when modelName is missing', async () => {
       await expect(
-        createModel({ provider: 'custom', baseUrl: 'http://localhost:8080/v1' })
+        createModel({ provider: 'openai-compatible', baseUrl: 'http://localhost:8080/v1' })
       ).rejects.toThrow('Model name required');
     });
 
     it('creates model with custom config', async () => {
       const model = await createModel({
-        provider: 'custom',
+        provider: 'openai-compatible',
         baseUrl: 'http://localhost:8080/v1',
         modelName: 'my-model',
         apiKey: 'my-key',
@@ -133,21 +133,29 @@ describe('createModel', () => {
   });
 
   it('handles all provider types exhaustively', async () => {
-    type TestableProvider = Exclude<ProviderName, 'custom'>;
-    const providers: TestableProvider[] = ['google', 'openai', 'anthropic', 'ollama', 'openrouter'];
-    const expectedProviderStrings: Record<TestableProvider, string> = {
+    const providers: ProviderName[] = ['google', 'openai', 'anthropic', 'ollama', 'openrouter', 'openai-compatible'];
+    const expectedProviderStrings: Record<ProviderName, string> = {
       google: 'google.generative-ai',
       openai: 'openai.responses',
       anthropic: 'anthropic.messages',
       ollama: 'ollama.chat',
       openrouter: 'openrouter.chat',
+      'openai-compatible': 'openai-compatible.chat',
     };
 
     for (const provider of providers) {
-      const model = await createModel({
-        provider,
-        apiKey: provider === 'ollama' ? undefined : testApiKey,
-      });
+      let options: any = { provider };
+      if (provider === 'ollama') {
+        options.modelName = 'glm-4.7-flash';
+      } else if (provider === 'openai-compatible') {
+        options.baseUrl = 'http://localhost:8080/v1';
+        options.modelName = 'test-model';
+        options.apiKey = 'test-key';
+      } else {
+        options.apiKey = testApiKey;
+      }
+
+      const model = await createModel(options);
       expect(model).toBeDefined();
       const modelObj = model as { provider: string };
       expect(modelObj.provider).toBe(expectedProviderStrings[provider]);
@@ -161,7 +169,7 @@ describe('requiresApiKey', () => {
   });
 
   it('returns true for cloud providers', () => {
-    const cloudProviders: ProviderName[] = ['google', 'openai', 'anthropic', 'openrouter', 'custom'];
+    const cloudProviders: ProviderName[] = ['google', 'openai', 'anthropic', 'openrouter', 'openai-compatible'];
     cloudProviders.forEach((p) => expect(requiresApiKey(p)).toBe(true));
   });
 });
