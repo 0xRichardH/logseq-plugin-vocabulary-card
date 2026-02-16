@@ -1,28 +1,54 @@
 import type { SettingSchemaDesc } from '@logseq/libs/dist/LSPlugin';
 
 export const settingsSchema: SettingSchemaDesc[] = [
+  // --- Provider Selection ---
   {
     key: 'provider',
     type: 'enum',
-    enumChoices: ['google', 'openai', 'anthropic'],
+    enumChoices: ['google', 'openai', 'anthropic', 'ollama', 'openrouter', 'openai-compatible'],
     enumPicker: 'select',
     default: 'google',
     title: 'AI Provider',
-    description: 'Select your preferred AI provider',
+    description: 'Select which provider to use for generation. Configure the specific settings below.',
+  },
+
+  // --- AI Configuration ---
+  {
+    key: 'aiConfigHeading',
+    type: 'heading',
+    default: null,
+    title: 'AI Configuration',
+    description: '',
   },
   {
-    key: 'apiKey',
+    key: 'aiModelId',
     type: 'string',
     default: '',
-    title: 'API Key',
-    description: 'API key for the selected provider',
+    title: 'Model ID',
+    description: 'Model identifier (e.g., gemini-2.5-flash, gpt-5-2, claude-haiku-4-5)',
   },
   {
-    key: 'customModel',
+    key: 'aiApiKey',
     type: 'string',
     default: '',
-    title: 'Custom Model (Optional)',
-    description: 'Override default model. Defaults: gemini-2.5-flash (Google), gpt-5-2 (OpenAI), claude-haiku-4-5 (Anthropic)',
+    title: 'API Key (Optional)',
+    description: 'API key for the provider (not required for Ollama and some other providers)',
+  },
+  {
+    key: 'aiBaseUrl',
+    type: 'string',
+    default: '',
+    title: 'Base URL (Optional)',
+    description: 'Override the default API endpoint URL',
+  },
+
+  // --- General Settings ---
+  {
+    key: 'generalHeading',
+    type: 'heading',
+    default: null,
+    title: 'General',
+    description: '',
   },
   {
     key: 'customTags',
