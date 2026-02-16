@@ -1,6 +1,6 @@
 {
   "name": "logseq-plugin-vocabulary-card",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "Generate vocabulary flashcards in Logseq using AI",
   "main": "index.html",
   "scripts": {
